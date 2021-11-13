@@ -69,24 +69,40 @@ async function run(){
             // res.send('order processed')
         });
 
+        // delete order api
+        app.delete('/orders/:id', async (req, res) =>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
+            res.json(result);
+        });
+
+        // delete products api
+        app.delete('/products/:id', async (req, res) =>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(query);
+            res.json(result);
+        });
+
          // get single product 
-       app.get('/orders/:', async(req, res) =>{
+        app.get('/orders/:', async(req, res) =>{
         const id = req.params.id;
         const query = {_id: ObjectId(id)};
         const product = await productsCollection.findOne(query);
         res.json(product);
-    });
+        });
 
-    // user api
-    app.post('/users', async(req, res)=>{
+        // user api
+        app.post('/users', async(req, res)=>{
         const user = req.body;
         const result = await usersCollection.insertOne(user);  
         console.log(result);
         res.json(result);
-    });
+        });
 
-    // role api
-    app.get('/users/:email', async(req, res) =>{
+        // role api
+        app.get('/users/:email', async(req, res) =>{
         const email = req.params.email;
         const query= {email: email};
         const user = await usersCollection.findOne(query);
@@ -95,29 +111,22 @@ async function run(){
           isAdmin = true;
         }
         res.json({admin : isAdmin});
-      });
+        });
 
-    // make admin api
-    app.put('/users/admin', async(req, res) =>{
+        // make admin api
+        app.put('/users/admin', async(req, res) =>{
         const user = req.body;
         const filter = {email: user.email};
         const updateDoc = {$set: {role: 'admin'}};
         const result = await usersCollection.updateOne(filter, updateDoc);
         res.json(result);
-        // const reqester = req.decodedEmail;
-        // if(requester){
-        //   const requesterAccount = usersCollection.findOne({email: requester});
-        //   if(requesterAccount.role === 'admin'){
-            // const filter = {email: user.email};
-            // const updateDoc = {$set: {role: 'admin'}};
-            // const result = await usersCollection.updateOne(filter, updateDoc);
-            // res.json(result);
-        //   }
-        // }
-        // else{
-        //   res.status(403).json({message: 'You do not have access to admin'})
-        // }
-      })
+        });
+
+        // my order api 
+        app.get('/orders/:email', async (req, res) =>{
+        const result = await ordersCollection.find({email: req.params.email}).toArray();
+        res.send(result);
+        });
 
     }
     finally{
