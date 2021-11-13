@@ -24,6 +24,7 @@ async function run(){
         const database = client.db('e-bike');
         const productsCollection = database.collection('products');
         const ordersCollection = database.collection('orders');
+        const usersCollection = database.collection('users');
 
         // get products api
         app.get('/products', async(req,res) =>{
@@ -74,6 +75,14 @@ async function run(){
         const query = {_id: ObjectId(id)};
         const product = await productsCollection.findOne(query);
         res.json(product);
+    });
+
+    // user api
+    app.post('/users', async(req, res)=>{
+        const user = req.body;
+        const result = await usersCollection.insertOne(user);  
+        console.log(result);
+        res.json(result);
     });
 
     }
